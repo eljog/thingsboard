@@ -80,4 +80,32 @@
                             audit-log-mode="{{vm.types.auditLogMode.entity}}">
             </tb-audit-log-table>
         </md-tab>
+        <md-tab ng-if="!vm.grid.detailsConfig.isDetailsEditMode && vm.grid.isTenantAdmin()" md-on-select="vm.render(false)" label="Topology">
+            <md-button class="md-raised primary" class="fas fa-fish" ng-click="vm.render(false)">Render</md-button>
+            <md-button class="md-raised primary" ng-click="vm.render(true)">Render Full Topology</md-button>
+            
+            <span ng-if="vm.topologyMessage">{{vm.topologyMessage}}</span>
+
+            <div>
+                <ul class="topo">
+                    <li ng-repeat="device in [vm.topologyTree]" ng-include="'topologyTree'"></li>
+                </ul>
+            </div>
+
+            <div id="topology" style="width: 900px; height: 800px;"></div>
+
+        </md-tab>
 </tb-grid>
+
+<script type="text/ng-template" id="topologyTree">
+    {{ device.macAddress }}
+    {{ device.child.macAddress}}  
+    <ul ng-if="device.relatedDevices" class="topo">
+        <li ng-repeat="device in device.relatedDevices" ng-include="'topologyTree'">         
+        </li>
+    </ul>
+    <ul ng-if="device.child.relatedDevices" class="topo">
+        <li ng-repeat="device in device.child.relatedDevices" ng-include="'topologyTree'">         
+        </li>
+    </ul>
+</script>

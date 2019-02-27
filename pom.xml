@@ -97,6 +97,7 @@
         <module>tools</module>
         <module>application</module>
         <module>msa</module>
+        <module>topologyservice</module>
     </modules>
 
     <profiles>

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@flowjs/ng-flow": "^2.7.1",
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "angular": "1.5.8",
     "angular-animate": "1.5.8",
     "angular-aria": "1.5.8",
@@ -87,7 +88,8 @@
     "tinycolor2": "^1.4.1",
     "tooltipster": "^4.2.4",
     "typeface-roboto": "0.0.22",
-    "v-accordion": "^1.6.0"
+    "v-accordion": "^1.6.0",
+    "vis": "^4.21.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
