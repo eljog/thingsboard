@@ -160,42 +160,6 @@ function DeviceService(
     return deferred.promise;
   }
 
-  function getDeviceTopology(deviceName, full, ignoreErrors, config) {
-    var deferred = $q.defer();
-    var url = `/api/simple-topology/${deviceName}/?full=${full}`;
-    if (!config) {
-      config = {};
-    }
-    config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    $http.get(url, config).then(
-      function success(response) {
-        deferred.resolve(response.data);
-      },
-      function fail(response) {
-        deferred.reject(response.data);
-      }
-    );
-    return deferred.promise;
-  }
-
-  function getDeviceTopologyTree(deviceName, full, ignoreErrors, config) {
-    var deferred = $q.defer();
-    var url = `/api/topology/${deviceName}/?full=${full}`;
-    if (!config) {
-      config = {};
-    }
-    config = Object.assign(config, { ignoreErrors: ignoreErrors });
-    $http.get(url, config).then(
-      function success(response) {
-        deferred.resolve(response.data);
-      },
-      function fail(response) {
-        deferred.reject(response.data);
-      }
-    );
-    return deferred.promise;
-  }
-
   function getDevices(deviceIds, config) {
     var deferred = $q.defer();
     var ids = "";
@@ -438,6 +402,42 @@ function DeviceService(
       },
       function fail() {
         deferred.reject();
+      }
+    );
+    return deferred.promise;
+  }
+
+  function getDeviceTopology(deviceName, full, ignoreErrors, config) {
+    var deferred = $q.defer();
+    var url = `/api/simple-topology/${deviceName}/?full=${full}`;
+    if (!config) {
+      config = {};
+    }
+    config = Object.assign(config, { ignoreErrors: ignoreErrors });
+    $http.get(url, config).then(
+      function success(response) {
+        deferred.resolve(response.data);
+      },
+      function fail(response) {
+        deferred.reject(response.data);
+      }
+    );
+    return deferred.promise;
+  }
+
+  function getDeviceTopologyTree(deviceName, full, ignoreErrors, config) {
+    var deferred = $q.defer();
+    var url = `/api/topology/${deviceName}/?full=${full}`;
+    if (!config) {
+      config = {};
+    }
+    config = Object.assign(config, { ignoreErrors: ignoreErrors });
+    $http.get(url, config).then(
+      function success(response) {
+        deferred.resolve(response.data);
+      },
+      function fail(response) {
+        deferred.reject(response.data);
       }
     );
     return deferred.promise;
