@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.thingsboard.rule.engine.api.RpcError;
+import org.thingsboard.server.common.data.Device;
+import org.thingsboard.server.common.data.EntityType;
 import org.thingsboard.server.common.data.audit.ActionType;
 import org.thingsboard.server.common.data.exception.ThingsboardErrorCode;
 import org.thingsboard.server.common.data.exception.ThingsboardException;
@@ -41,6 +43,7 @@ import org.thingsboard.server.common.data.id.TenantId;
 import org.thingsboard.server.common.data.id.UUIDBased;
 import org.thingsboard.server.common.data.rpc.RpcRequest;
 import org.thingsboard.server.common.data.rpc.ToDeviceRpcRequestBody;
+import org.thingsboard.server.common.data.security.DeviceCredentials;
 import org.thingsboard.server.common.msg.rpc.ToDeviceRpcRequest;
 import org.thingsboard.server.service.rpc.DeviceRpcService;
 import org.thingsboard.server.service.rpc.FromDeviceRpcResponse;
@@ -49,6 +52,7 @@ import org.thingsboard.server.service.security.AccessValidator;
 import org.thingsboard.server.service.security.model.SecurityUser;
 import org.thingsboard.server.service.security.permission.Operation;
 import org.thingsboard.server.service.telemetry.exception.ToErrorResponseEntity;
+import org.thingsboard.server.transport.snmp.SnmpGetManager;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -75,6 +79,9 @@ public class RpcController extends BaseController {
 
     @Autowired
     private AccessValidator accessValidator;
+
+    @Autowired
+    private SnmpGetManager snmpGetManager;
 
     private ExecutorService executor;
 
@@ -144,9 +151,28 @@ public class RpcController extends BaseController {
                     response.setResult(entity);
                 }
             }));
+            this.askSnmpToListen(deviceId);
             return response;
         } catch (IOException ioe) {
             throw new ThingsboardException("Invalid request body", ioe, ThingsboardErrorCode.BAD_REQUEST_PARAMS);
+        }
+    }
+
+    private void askSnmpToListen(DeviceId deviceId) throws ThingsboardException {
+        try {
+            Device device = checkDeviceId(deviceId, Operation.READ_CREDENTIALS);
+            DeviceCredentials deviceCredentials = checkNotNull(deviceCredentialsService.findDeviceCredentialsByDeviceId(getCurrentUser().getTenantId(), deviceId));
+//            logEntityAction(deviceId, device,
+//                    device.getCustomerId(),
+//                    ActionType.CREDENTIALS_READ, null, strDeviceId);
+            log.info("Asking snmpGetManager to Listen.............");
+            snmpGetManager.askToListenForRpc(deviceCredentials.getCredentialsId());
+
+        } catch (Exception e) {
+//            logEntityAction(emptyId(EntityType.DEVICE), null,
+//                    null,
+//                    ActionType.CREDENTIALS_READ, e, strDeviceId);
+            throw handleException(e);
         }
     }
 
